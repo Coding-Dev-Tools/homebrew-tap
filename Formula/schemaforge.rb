@@ -1,8 +1,8 @@
 class Schemaforge < Formula
   desc "Bidirectional ORM schema converter — convert between SQL DDL, Prisma, Drizzle, TypeORM, and Django models with zero-loss roundtripping"
   homepage "https://github.com/Coding-Dev-Tools/schemaforge"
-  url "https://github.com/Coding-Dev-Tools/schemaforge/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "fb83df245654c33e28f075bce99536f039f399efeb74995c069545ec0a85e799"
+  url "https://github.com/Coding-Dev-Tools/schemaforge/archive/refs/tags/v1.7.0.tar.gz"
+  sha256 "b7f523d16a04c9ff4b010a8a9765c117c008b9281d3a3bd675e079623538a092"
   license "MIT"
 
   depends_on "python@3.10"

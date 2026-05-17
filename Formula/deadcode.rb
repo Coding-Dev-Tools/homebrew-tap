@@ -1,8 +1,8 @@
 class Deadcode < Formula
   desc "CLI tool to detect unused exports, dead routes, orphaned CSS and unreferenced components in TS/React/Next.js projects"
   homepage "https://github.com/Coding-Dev-Tools/deadcode"
-  url "https://github.com/Coding-Dev-Tools/deadcode/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "23dfe7166a01e8b802906f216e48b4d3c55be0fb291687057abd4ff8cd31c1ac"
+  url "https://github.com/Coding-Dev-Tools/deadcode/archive/refs/tags/v0.1.1.tar.gz"
+  sha256 "52cc212289b607760dbac702508e5a583d0d4ff2f5705f9f08e0d949264d068d"
   license "MIT"
 
   depends_on "python@3.10"
