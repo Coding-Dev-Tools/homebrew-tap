@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  tap-syntax:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew test-bot --only-tap-syntax
