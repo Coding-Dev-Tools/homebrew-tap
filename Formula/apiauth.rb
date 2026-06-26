@@ -1,8 +1,8 @@
 class Apiauth < Formula
   desc "CLI tool for API key and JWT lifecycle management with encrypted local store"
   homepage "https://github.com/Coding-Dev-Tools/apiauth"
-  url "https://github.com/Coding-Dev-Tools/apiauth/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "9d9ee19a5bca31fc2b25b00eae94fa69dacea759b3ded8b03dc7ee850c6845f6"
+  url "https://github.com/Coding-Dev-Tools/apiauth/archive/refs/tags/v0.2.0.tar.gz"
+  sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
   license "MIT"
 
   depends_on "python@3.10"
