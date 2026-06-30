@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  tap-syntax:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew test-bot --only-tap-syntax
+
+  placeholder-hash-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail on placeholder sha256
+        run: |
+          if grep -rEl 'sha256 "0{64}"|TODO' Formula/; then
+            echo "::error::Formula(s) above still contain a placeholder/all-zero sha256 — installs will fail. Recompute from the real release tarball before merging."
+            exit 1
+          fi
+          echo "No placeholder hashes found."

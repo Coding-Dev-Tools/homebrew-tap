@@ -1,8 +1,8 @@
 class ClickToMcp < Formula
   desc "Convert any Python Click/Typer CLI into an MCP server automatically"
   homepage "https://github.com/Coding-Dev-Tools/click-to-mcp"
-  url "https://github.com/Coding-Dev-Tools/click-to-mcp/archive/refs/tags/v0.5.4.tar.gz"
-  sha256 "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed"
+  url "https://github.com/Coding-Dev-Tools/click-to-mcp/archive/refs/tags/v0.5.0.tar.gz"
+  sha256 "98cde7c8ca0a9ff709ecb0e35333c125839ee251d18c8442d3d755e3bc798c8c"
   license "MIT"
 
   depends_on "python@3.10"
