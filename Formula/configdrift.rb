@@ -2,7 +2,7 @@ class Configdrift < Formula
   desc "Track and detect configuration drift across environments over time"
   homepage "https://github.com/Coding-Dev-Tools/configdrift"
   url "https://github.com/Coding-Dev-Tools/configdrift/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "fef60b059345d4d94214f3b9e8aa9738ddca088e1352c940bcf4ac9db04dfcba"
+  sha256 "045633fc5e7dc4e5f13b2922c25843531e5f176a13971f01a9f48dde5108ca7d"
   license "MIT"
 
   depends_on "python@3.10"
