@@ -1,6 +1,22 @@
 # DevForge Homebrew Tap
 
-Homebrew formulas for **DevForge** developer CLI tools — installable via `brew install Coding-Dev-Tools/homebrew-tap/<formula>`.
+Homebrew formulas for **DevForge** developer CLI tools — installable via:
+
+```bash
+brew install Coding-Dev-Tools/homebrew-tap/<formula>
+```
+
+## Development workflow
+
+```bash
+brew tap Coding-Dev-Tools/homebrew-tap
+brew install <formula>
+<tool> --help
+```
+
+## Maintainers / Contributors
+
+Submit formula changes against the `main` branch.
 
 ## Available Formulas
 
