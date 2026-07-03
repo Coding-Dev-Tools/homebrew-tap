@@ -1,43 +1,22 @@
-<<<<<<< HEAD
-# homebrew-tap
-
-> One-line description of **homebrew-tap** goes here.
-
-## Overview
-
-What this project does and why it exists. Replace this paragraph with a
-2-3 sentence description of the problem space and the approach.
-
-## Install
-
-```bash
-# install
-```
-
-## Usage
-
-```bash
-# example invocation
-```
-
-## Test
-
-```bash
-# test command
-```
-
-## Contributing
-
-Issues and PRs welcome. See `AGENTS.md` if present for agent-style
-contribution guidance.
-
-## License
-
-MIT (see [LICENSE](./LICENSE)).
-=======
 # DevForge Homebrew Tap
 
-Homebrew formulas for **DevForge** developer CLI tools — installable via `brew install Coding-Dev-Tools/homebrew-tap/<formula>`.
+Homebrew formulas for **DevForge** developer CLI tools — installable via:
+
+```bash
+brew install Coding-Dev-Tools/homebrew-tap/<formula>
+```
+
+## Development workflow
+
+```bash
+brew tap Coding-Dev-Tools/homebrew-tap
+brew install <formula>
+<tool> --help
+```
+
+## Maintainers / Contributors
+
+Submit formula changes against the `main` branch.
 
 ## Available Formulas
 
@@ -70,4 +49,3 @@ schemaforge --help
 ## License
 
 MIT — see [LICENSE](./LICENSE).
->>>>>>> 9b7d84f5e2e5f2be067572dae7edabbf656113a2
