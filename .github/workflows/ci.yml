@@ -22,3 +22,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify formula URLs resolve and sha256 matches the real tarball
         run: bash scripts/verify-checksums.sh Formula
+
+  # Static coherence guard: the pip install prefix must match the executable
+  # each formula symlinks into `bin`. Catches `std_pip_args(prefix: true)` and
+  # similar, where syntax + checksum CI pass but `brew install` fails at the
+  # install_symlink step. See scripts/verify-formula-install.sh. No brew needed.
+  install-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify each formula installs where it symlinks
+        run: bash scripts/verify-formula-install.sh Formula

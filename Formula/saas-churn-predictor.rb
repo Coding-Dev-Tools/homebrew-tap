@@ -8,7 +8,7 @@ class SaasChurnPredictor < Formula
   depends_on "python@3.10"
 
   def install
-    system "pip3", "install", *std_pip_args(prefix: true), "."
+    system "pip3", "install", *std_pip_args(prefix: libexec), "."
     bin.install_symlink libexec/"bin/churn-predictor"
   end
 
