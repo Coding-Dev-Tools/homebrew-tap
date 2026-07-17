@@ -8,7 +8,7 @@ class ClickToMcp < Formula
   depends_on "python@3.10"
 
   def install
-    system "pip3", "install", *std_pip_args(prefix: libexec), "."
+    system Formula["python@3.10"].opt_libexec/"bin/pip3", "install", *std_pip_args(prefix: libexec), "."
     bin.install_symlink libexec/"bin/click-to-mcp"
   end
 
