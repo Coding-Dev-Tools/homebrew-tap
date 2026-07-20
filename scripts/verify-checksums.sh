@@ -24,11 +24,14 @@ NOT_FOUND_HASH="0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5
 
 is_known_broken() {
   local n="${1}" k
-  if [[ ${#KNOWN_BROKEN[@]} -eq 0 ]]; then
+  if [[ ${#KNOWN_BROKEN[@]} -eq 0 ]]
+  then
     return 1
   fi
-  for k in "${KNOWN_BROKEN[@]}"; do
-    if [[ ${k} == "${n}" ]]; then
+  for k in "${KNOWN_BROKEN[@]}"
+  do
+    if [[ ${k} == "${n}" ]]
+    then
       return 0
     fi
   done
@@ -42,19 +45,23 @@ tmp="$(mktemp)"
 trap 'rm -f "${tmp}"' EXIT
 
 shopt -s nullglob
-for rb in "${FORMULA_DIR}"/*.rb; do
+for rb in "${FORMULA_DIR}"/*.rb
+do
   name="$(basename "${rb}" .rb)"
   url="$(grep -oP 'url "\K[^"]+' "${rb}" | head -1)"
   sha="$(grep -oP 'sha256 "\K[^"]+' "${rb}" | head -1)"
 
   # 1) Deterministic checks (no network) --------------------------------------
-  if [[ ! ${sha} =~ ^[0-9a-f]{64}$ ]]; then
+  if [[ ! ${sha} =~ ^[0-9a-f]{64}$ ]]
+  then
     echo "::error file=${rb}::${name}: malformed sha256 (must be 64 lowercase hex): '${sha}'"
     fail=1
     continue
   fi
-  if [[ ${sha} == "${NOT_FOUND_HASH}" ]]; then
-    if is_known_broken "${name}"; then
+  if [[ ${sha} == "${NOT_FOUND_HASH}" ]]
+  then
+    if is_known_broken "${name}"
+    then
       echo "::warning file=${rb}::${name}: sha256 is GitHub's 'Not Found' error-page hash (dead release URL) — known-broken, tracked."
       warn=$((warn + 1))
       continue
@@ -66,8 +73,10 @@ for rb in "${FORMULA_DIR}"/*.rb; do
 
   # 2) Network check: download + compare --------------------------------------
   code="$(curl -sSL --retry 2 --max-time 60 -o "${tmp}" -w '%{http_code}' "${url}" 2> /dev/null || echo 000)"
-  if [[ ${code} != "200" ]]; then
-    if is_known_broken "${name}"; then
+  if [[ ${code} != "200" ]]
+  then
+    if is_known_broken "${name}"
+    then
       echo "::warning file=${rb}::${name}: url returned HTTP ${code} (known-broken, tracked): ${url}"
       warn=$((warn + 1))
       continue
@@ -77,8 +86,10 @@ for rb in "${FORMULA_DIR}"/*.rb; do
     continue
   fi
   got="$(sha256sum "${tmp}" | cut -d' ' -f1)"
-  if [[ ${got} != "${sha}" ]]; then
-    if is_known_broken "${name}"; then
+  if [[ ${got} != "${sha}" ]]
+  then
+    if is_known_broken "${name}"
+    then
       echo "::warning file=${rb}::${name}: sha256 mismatch (known-broken, tracked): have=${sha} real=${got}"
       warn=$((warn + 1))
       continue
@@ -92,7 +103,8 @@ for rb in "${FORMULA_DIR}"/*.rb; do
 done
 
 echo
-if [[ ${fail} -eq 0 ]]; then
+if [[ ${fail} -eq 0 ]]
+then
   echo "checksum-verify: PASS — ${okc} verified, ${warn} known-broken warning(s)."
 else
   echo "checksum-verify: FAIL — ${okc} verified, ${warn} warning(s), and one or more errors above."
