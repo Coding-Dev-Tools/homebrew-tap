@@ -14,8 +14,8 @@ set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$HERE/.." && pwd)"
-VERIFY_INSTALL="$ROOT/scripts/verify-formula-install.sh"
-VERIFY_CHECKSUM="$ROOT/scripts/verify-checksums.sh"
+VERIFY_INSTALL="${ROOT}/scripts/verify-formula-install.sh"
+VERIFY_CHECKSUM="${ROOT}/scripts/verify-checksums.sh"
 
 FX="$(mktemp -d)"
 CS="$(mktemp -d)"
@@ -28,12 +28,12 @@ pass=0
 fail=0
 check() { # check <desc> <expected_exit> <actual_exit>
   local desc="$1" exp="$2" act="$3"
-  if [ "$exp" -eq "$act" ]
+  if [[ "${exp}" -eq "${act}" ]]
   then
-    echo "  ok: $desc (exit=$act)"
+    echo "  ok: ${desc} (exit=${act})"
     pass=$((pass + 1))
   else
-    echo "  ::error::$desc - expected exit $exp but got $act (guard regression / silent-green!)"
+    echo "  ::error::${desc} - expected exit ${exp} but got ${act} (guard regression / silent-green!)"
     fail=$((fail + 1))
   fi
 }
@@ -120,11 +120,11 @@ cp "$CS/saas-churn-predictor.rb" "$CSKB/"
 check "downgrades KNOWN_BROKEN 404-hash to a warning (exit 0)" 0 $?
 
 echo
-if [ "$fail" -eq 0 ]
+if [[ "${fail}" -eq 0 ]]
 then
-  echo "guard-tests: PASS - $pass assertion(s) ok."
+  echo "guard-tests: PASS - ${pass} assertion(s) ok."
   exit 0
 else
-  echo "guard-tests: FAIL - $fail assertion(s) failed, $pass ok."
+  echo "guard-tests: FAIL - ${fail} assertion(s) failed, ${pass} ok."
   exit 1
 fi
