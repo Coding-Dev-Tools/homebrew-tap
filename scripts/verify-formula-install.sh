@@ -21,14 +21,17 @@
 set -uo pipefail
 
 FORMULA_DIR="${1:-Formula}"
-fail=0; okc=0; skip=0
+fail=0
+okc=0
+skip=0
 
 shopt -s nullglob
-for rb in "$FORMULA_DIR"/*.rb; do
+for rb in "$FORMULA_DIR"/*.rb
+do
   name="$(basename "$rb" .rb)"
 
   # Prefix argument passed to std_pip_args (strip quotes + surrounding space).
-  prefix="$(grep -oP 'std_pip_args\(\s*prefix:\s*\K[^),]+' "$rb" | head -1 | tr -d "\"'" | xargs)"
+  prefix="$(grep -oP 'std_pip_args\(\s*prefix:\s*\K[^),]+' "$rb" | head -1 | tr -d "\"' " | xargs)"
   # Base identifier of the install_symlink source (libexec / prefix / ...).
   symbase="$(grep -oP 'bin\.install_symlink\s+\K[A-Za-z_][A-Za-z_0-9]*' "$rb" | head -1)"
 
