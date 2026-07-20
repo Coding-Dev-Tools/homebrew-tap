@@ -28,7 +28,7 @@ pass=0
 fail=0
 check() { # check <desc> <expected_exit> <actual_exit>
   local desc="$1" exp="$2" act="$3"
-  if [[ "${exp}" -eq "${act}" ]]; then
+  if [[ ${exp} -eq ${act} ]]; then
     echo "  ok: ${desc} (exit=${act})"
     pass=$((pass + 1))
   else
@@ -119,7 +119,7 @@ cp "${CS}/saas-churn-predictor.rb" "${CSKB}/"
 check "downgrades KNOWN_BROKEN 404-hash to a warning (exit 0)" 0 $?
 
 echo
-if [[ "${fail}" -eq 0 ]]; then
+if [[ ${fail} -eq 0 ]]; then
   echo "guard-tests: PASS - ${pass} assertion(s) ok."
   exit 0
 else
