@@ -29,13 +29,5 @@ formulae for the Coding-Dev-Tools suite of developer utilities.
 3. Verify with the local guards (see above)
 4. Submit a pull request
 
-### Standards
-- Every formula using `std_pip_args` must have a coherent prefix-symlink pair
-- Every release URL must resolve to a real tarball with a matching SHA256
-- If a release is temporarily unavailable, add the formula to `KNOWN_BROKEN` in
-  `scripts/verify-checksums.sh` and document the reason
-
 ## Code of Conduct
-
 Please note that this project adheres to a [Code of Conduct](CODE_OF_CONDUCT.md).
-By participating, you agree to abide by its terms.

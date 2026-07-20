@@ -1,8 +1,8 @@
 class Json2sqlCli < Formula
   desc "Convert JSON files to SQL CREATE TABLE and INSERT statements automatically"
   homepage "https://github.com/Coding-Dev-Tools/json2sql"
-  url "https://github.com/Coding-Dev-Tools/json2sql/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "7065a146d1cb672c9d3b8c0e2eb5a547af87c0fd178fce34429bbf72bb56a194"
+  url "https://github.com/Coding-Dev-Tools/json2sql/archive/refs/tags/v0.1.1.tar.gz"
+  sha256 "c3e2137c9bd5f2dd10319ba0d0cfb90a5d3452cafcb781d3d29a1c50c6aa3894"
   license "MIT"
 
   depends_on "python@3.10"

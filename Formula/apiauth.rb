@@ -16,4 +16,3 @@ class Apiauth < Formula
     system bin/"apiauth", "--help"
   end
 end
-
