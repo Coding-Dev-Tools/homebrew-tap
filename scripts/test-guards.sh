@@ -24,15 +24,17 @@ CSKB="$(mktemp -d)"
 cleanup() { rm -rf "$FX" "$CS" "$GOODONLY" "$CSKB"; }
 trap cleanup EXIT
 
-pass=0; fail=0
-check() {            # check <desc> <expected_exit> <actual_exit>
+pass=0
+fail=0
+check() { # check <desc> <expected_exit> <actual_exit>
   local desc="$1" exp="$2" act="$3"
-  if [ "$exp" -eq "$act" ]; then
+  if [ "$exp" -eq "$act" ]
+  then
     echo "  ok: $desc (exit=$act)"
-    pass=$((pass+1))
+    pass=$((pass + 1))
   else
     echo "  ::error::$desc - expected exit $exp but got $act (guard regression / silent-green!)"
-    fail=$((fail+1))
+    fail=$((fail + 1))
   fi
 }
 
