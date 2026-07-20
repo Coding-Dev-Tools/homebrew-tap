@@ -33,3 +33,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify each formula installs where it symlinks
         run: bash scripts/verify-formula-install.sh Formula
+
+  # Self-tests for the two silent-failure guards above. If a guard itself
+  # regresses (e.g. starts accepting a broken formula), this job turns CI
+  # RED instead of letting a broken formula ship under a green build.
+  # No network / brew / ruby required. See scripts/test-guards.sh.
+  guard-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify the formula guards actually catch broken formulae
+        run: bash scripts/test-guards.sh

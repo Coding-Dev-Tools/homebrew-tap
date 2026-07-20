@@ -66,6 +66,19 @@ Run it locally before opening a PR that touches a formula:
 bash scripts/verify-checksums.sh Formula
 ```
 
+### Guard self-tests
+
+The two guards above are themselves tested, because a guard that silently
+stops catching broken formulae would keep CI green while broken formulae
+ship. [`scripts/test-guards.sh`](./scripts/test-guards.sh) builds throwaway
+fixture formulae (no network / `brew` / `ruby` needed) and asserts each guard
+catches the bug class it claims to catch. It runs as the `guard-tests` CI job
+and turns the build RED on any guard regression.
+
+```bash
+bash scripts/test-guards.sh
+```
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
