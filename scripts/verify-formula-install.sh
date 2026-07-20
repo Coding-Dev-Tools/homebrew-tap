@@ -48,6 +48,9 @@ do
       fail=1
       continue
       ;;
+    *)
+      :
+      ;;
   esac
 
   if [[ -n "${symbase}" ]] && [[ "${prefix}" != "${symbase}" ]]
