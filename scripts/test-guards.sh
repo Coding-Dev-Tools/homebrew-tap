@@ -39,7 +39,7 @@ check() { # check <desc> <expected_exit> <actual_exit>
 
 # ---- Fixtures for verify-formula-install.sh (offline) -----------------------
 # good: install prefix matches symlink source base -> should PASS
-cat >"${FX}/good.rb" <<'RB'
+cat > "${FX}/good.rb" << 'RB'
 class Good < Formula
   desc "good"
   url "https://example.com/good.tar.gz"
@@ -52,7 +52,7 @@ end
 RB
 
 # badprefix: std_pip_args(prefix: true) -> Homebrew interpolates --prefix=true -> FAIL
-cat >"${FX}/badprefix.rb" <<'RB'
+cat > "${FX}/badprefix.rb" << 'RB'
 class Badprefix < Formula
   desc "badprefix"
   url "https://example.com/badprefix.tar.gz"
@@ -65,7 +65,7 @@ end
 RB
 
 # mismatch: installs into libexec but symlinks from prefix -> FAIL
-cat >"${FX}/mismatch.rb" <<'RB'
+cat > "${FX}/mismatch.rb" << 'RB'
 class Mismatch < Formula
   desc "mismatch"
   url "https://example.com/mismatch.tar.gz"
@@ -78,16 +78,16 @@ end
 RB
 
 echo "verify-formula-install.sh:"
-"${VERIFY_INSTALL}" "${FX}" >/dev/null 2>&1
+"${VERIFY_INSTALL}" "${FX}" > /dev/null 2>&1
 check "catches badprefix + mismatch (no clean tree)" 1 $?
 # a dir with only the good fixture must pass
 cp "${FX}/good.rb" "${GOODONLY}/"
-"${VERIFY_INSTALL}" "${GOODONLY}" >/dev/null 2>&1
+"${VERIFY_INSTALL}" "${GOODONLY}" > /dev/null 2>&1
 check "passes a coherent formula" 0 $?
 
 # ---- Fixtures for verify-checksums.sh (offline-deterministic paths) ---------
 # malformed: sha256 is not 64 hex -> must FAIL (no network needed)
-cat >"${CS}/malformed.rb" <<'RB'
+cat > "${CS}/malformed.rb" << 'RB'
 class Malformed < Formula
   url "https://example.com/malformed.tar.gz"
   sha256 "zzzz-not-a-real-hash"
@@ -95,7 +95,7 @@ end
 RB
 
 # notfound: carries GitHub's 404-page hash, NOT in KNOWN_BROKEN -> must FAIL
-cat >"${CS}/notfound.rb" <<'RB'
+cat > "${CS}/notfound.rb" << 'RB'
 class Notfound < Formula
   url "https://example.com/notfound.tar.gz"
   sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
@@ -103,7 +103,7 @@ end
 RB
 
 # knownbroken: same 404-page hash but name is in KNOWN_BROKEN -> downgrade to warning, exit 0
-cat >"${CS}/saas-churn-predictor.rb" <<'RB'
+cat > "${CS}/saas-churn-predictor.rb" << 'RB'
 class SaasChurnPredictor < Formula
   url "https://example.com/saas-churn-predictor.tar.gz"
   sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
@@ -111,11 +111,11 @@ end
 RB
 
 echo "verify-checksums.sh (offline paths):"
-"${VERIFY_CHECKSUM}" "${CS}" >/dev/null 2>&1
+"${VERIFY_CHECKSUM}" "${CS}" > /dev/null 2>&1
 check "fails on malformed hash + 404-page hash (known-broken downgraded)" 1 $?
 # KNOWN_BROKEN only: same 404 hash but the guard must NOT fail the build
 cp "${CS}/saas-churn-predictor.rb" "${CSKB}/"
-"${VERIFY_CHECKSUM}" "${CSKB}" >/dev/null 2>&1
+"${VERIFY_CHECKSUM}" "${CSKB}" > /dev/null 2>&1
 check "downgrades KNOWN_BROKEN 404-hash to a warning (exit 0)" 0 $?
 
 echo
