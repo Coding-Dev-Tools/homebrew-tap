@@ -72,7 +72,7 @@ do
   fi
 
   # 2) Network check: download + compare --------------------------------------
-  code="$(curl -sSL --retry 2 --max-time 60 -o "${tmp}" -w '%{http_code}' "${url}" 2> /dev/null || echo 000)"
+  code="$(curl -sSL --retry 2 --max-time 60 -o "${tmp}" -w '%{http_code}' "${url}" 2>/dev/null || echo 000)"
   if [[ ${code} != "200" ]]
   then
     if is_known_broken "${name}"

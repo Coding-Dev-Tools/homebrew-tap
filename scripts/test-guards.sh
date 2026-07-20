@@ -79,11 +79,11 @@ end
 RB
 
 echo "verify-formula-install.sh:"
-"${VERIFY_INSTALL}" "${FX}" > /dev/null 2>&1
+"${VERIFY_INSTALL}" "${FX}" >/dev/null 2>&1
 check "catches badprefix + mismatch (no clean tree)" 1 $?
 # a dir with only the good fixture must pass
 cp "${FX}/good.rb" "${GOODONLY}/"
-"${VERIFY_INSTALL}" "${GOODONLY}" > /dev/null 2>&1
+"${VERIFY_INSTALL}" "${GOODONLY}" >/dev/null 2>&1
 check "passes a coherent formula" 0 $?
 
 # ---- Fixtures for verify-checksums.sh (offline-deterministic paths) ---------
@@ -112,11 +112,11 @@ end
 RB
 
 echo "verify-checksums.sh (offline paths):"
-"${VERIFY_CHECKSUM}" "${CS}" > /dev/null 2>&1
+"${VERIFY_CHECKSUM}" "${CS}" >/dev/null 2>&1
 check "fails on malformed hash + 404-page hash (known-broken downgraded)" 1 $?
 # KNOWN_BROKEN only: same 404 hash but the guard must NOT fail the build
 cp "${CS}/saas-churn-predictor.rb" "${CSKB}/"
-"${VERIFY_CHECKSUM}" "${CSKB}" > /dev/null 2>&1
+"${VERIFY_CHECKSUM}" "${CSKB}" >/dev/null 2>&1
 check "downgrades KNOWN_BROKEN 404-hash to a warning (exit 0)" 0 $?
 
 echo
