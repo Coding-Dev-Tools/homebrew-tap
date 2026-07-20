@@ -21,6 +21,7 @@ FX="$(mktemp -d)"
 CS="$(mktemp -d)"
 GOODONLY="$(mktemp -d)"
 CSKB="$(mktemp -d)"
+# shellcheck disable=SC2329
 cleanup() { rm -rf "${FX}" "${CS}" "${GOODONLY}" "${CSKB}"; }
 trap cleanup EXIT
 
