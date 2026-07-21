@@ -1,8 +1,8 @@
 class Datamorph < Formula
   desc "Convert between CSV, JSON, YAML, Parquet, Avro, Protobuf with streaming"
   homepage "https://github.com/Coding-Dev-Tools/datamorph"
-  url "https://github.com/Coding-Dev-Tools/datamorph/archive/refs/tags/v0.1.1.tar.gz"
-  sha256 "29fd37d02172b3a1994eb15f71d650d82e55ca9bea0459f0cff3a6a1bda6b0b9"
+  url "https://github.com/Coding-Dev-Tools/datamorph/archive/refs/tags/v1.2.0.tar.gz"
+  sha256 "ae3ce3938c0be458a427c0e3c224ab231d512ea3a3fb8b62d20dea958831fc97"
   license "MIT"
 
   depends_on "python@3.10"
