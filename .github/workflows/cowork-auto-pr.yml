@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
       - name: Open PR for this branch if none exists
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.COWORK_PR_TOKEN || github.token }}
         run: |
           set -eu
           existing=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$GITHUB_REF_NAME" --state open --json number --jq 'length')

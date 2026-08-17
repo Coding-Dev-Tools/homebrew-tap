@@ -23,7 +23,17 @@ CSKB="$(mktemp -d)"
 SP="$(mktemp -d)"
 SP_BAD="$(mktemp -d)"
 # shellcheck disable=SC2329
-cleanup() { rm -rf "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"; }
+cleanup() {
+  # Archive fixtures per AGENTS.md mandate (never delete throwaway test data)
+  local archive_dir="${ROOT}/_tmp/guard-fixtures-$(date +%Y%m%d-%H%M%S)"
+  mkdir -p "${archive_dir}" 2>/dev/null || true
+  for d in "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"; do
+    if [ -d "$d" ]; then
+      cp -r "$d" "${archive_dir}/" 2>/dev/null || true
+    fi
+  done
+  rm -rf "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"
+}
 trap cleanup EXIT
 
 pass=0
@@ -147,9 +157,9 @@ jobs:
 YML
 
 echo "verify-sha-pins.sh:"
-"${VERIFY_SHA_PINS}" "${SP}" >/dev/null 2>&1
+bash "${VERIFY_SHA_PINS}" "${SP}" >/dev/null 2>&1
 check "passes when all uses: are SHA-pinned" 0 $?
-"${VERIFY_SHA_PINS}" "${SP_BAD}" >/dev/null 2>&1
+bash "${VERIFY_SHA_PINS}" "${SP_BAD}" >/dev/null 2>&1
 check "fails when uses: has mutable tag (@v4)" 1 $?
 
 echo

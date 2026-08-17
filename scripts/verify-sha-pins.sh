@@ -18,8 +18,15 @@ do
   while IFS= read -r line
   do
     # Extract the ref portion after @
-    ref="$(echo "${line}" | grep -oP 'uses:\s*\S+@\K\S+' || true)"
+    ref="$(echo "${line}" | grep -oP 'uses:\s*["'\'']*\K[^"'\''\s]+@[^"'\''\s]+' || true)"
     if [[ -z "${ref}" ]]
+    then
+      continue
+    fi
+    # Strip trailing quotes from YAML-quoted values
+    ref="${ref%[\"\']}"
+    # Skip docker:// container actions (no @ SHA pinning applies)
+    if [[ "${ref}" == docker://* ]]
     then
       continue
     fi
