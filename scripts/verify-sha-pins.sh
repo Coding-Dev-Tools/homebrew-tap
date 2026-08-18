@@ -18,7 +18,7 @@ do
   while IFS= read -r line
   do
     # Extract the ref portion after @
-    ref="$(echo "${line}" | grep -oP 'uses:\s*["'\'']*\K[^"'\''\s]+@[^"'\''\s]+' || true)"
+    ref="$(echo "${line}" | grep -oP 'uses:\s*["'\'']*\S+@\K[^"'\''\s]+' || true)"
     if [[ -z "${ref}" ]]
     then
       continue
