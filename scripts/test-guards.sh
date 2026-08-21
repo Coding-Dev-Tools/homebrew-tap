@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Self-tests for the tap's three silent-failure guards:\n#   - scripts/verify-formula-install.sh  (offline, grep-based)\n#   - scripts/verify-checksums.sh        (offline-deterministic checks)\n#   - scripts/verify-sha-pins.sh         (offline, regex-based)
+# Self-tests for the tap's three silent-failure guards:
+#   - scripts/verify-formula-install.sh  (offline, grep-based)
+#   - scripts/verify-checksums.sh        (offline-deterministic checks)
+#   - scripts/verify-sha-pins.sh         (offline, regex-based)
 #
 # These guards are the only thing standing between a broken formula and a
 # green CI run. If the guards themselves regress, CI must go RED — that is
