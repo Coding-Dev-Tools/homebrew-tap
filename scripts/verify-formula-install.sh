@@ -26,8 +26,7 @@ okc=0
 skip=0
 
 shopt -s nullglob
-for rb in "${FORMULA_DIR}"/*.rb
-do
+for rb in "${FORMULA_DIR}"/*.rb; do
   name="$(basename "${rb}" .rb)"
 
   # Prefix argument passed to std_pip_args (strip quotes + surrounding space).
@@ -35,26 +34,24 @@ do
   # Base identifier of the install_symlink source (libexec / prefix / ...).
   symbase="$(grep -oP 'bin\.install_symlink\s+\K[A-Za-z_][A-Za-z_0-9]*' "${rb}" | head -1)"
 
-  if [[ -z ${prefix} ]]
-  then
+  if [[ -z ${prefix} ]]; then
     echo "skip: ${name} (no std_pip_args prefix — nothing to check)"
     skip=$((skip + 1))
     continue
   fi
 
   case "${prefix}" in
-    true | false | nil | True | False | None)
-      echo "::error file=${rb}::${name}: std_pip_args(prefix: ${prefix}) is not a path — Homebrew interpolates it into '--prefix=${prefix}', so nothing installs where the symlink points and 'brew install ${name}' fails."
-      fail=1
-      continue
-      ;;
-    *)
-      :
-      ;;
+  true | false | nil | True | False | None)
+    echo "::error file=${rb}::${name}: std_pip_args(prefix: ${prefix}) is not a path — Homebrew interpolates it into '--prefix=${prefix}', so nothing installs where the symlink points and 'brew install ${name}' fails."
+    fail=1
+    continue
+    ;;
+  *)
+    :
+    ;;
   esac
 
-  if [[ -n ${symbase} ]] && [[ ${prefix} != "${symbase}" ]]
-  then
+  if [[ -n ${symbase} ]] && [[ ${prefix} != "${symbase}" ]]; then
     echo "::error file=${rb}::${name}: install prefix ('${prefix}') != install_symlink source base ('${symbase}'); 'brew install ${name}' will fail at install_symlink."
     fail=1
     continue
@@ -65,8 +62,7 @@ do
 done
 
 echo
-if [[ ${fail} -eq 0 ]]
-then
+if [[ ${fail} -eq 0 ]]; then
   echo "install-lint: PASS — ${okc} coherent, ${skip} skipped."
 else
   echo "install-lint: FAIL — ${okc} coherent, ${skip} skipped, and one or more errors above."

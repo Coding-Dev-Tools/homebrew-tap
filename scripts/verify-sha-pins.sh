@@ -12,27 +12,22 @@ fail=0
 okc=0
 
 shopt -s nullglob
-for yml in "${WORKFLOWS_DIR}"/*.yml "${WORKFLOWS_DIR}"/*.yaml
-do
+for yml in "${WORKFLOWS_DIR}"/*.yml "${WORKFLOWS_DIR}"/*.yaml; do
   # Match lines like:  - uses: owner/action@ref
-  while IFS= read -r line
-  do
+  while IFS= read -r line; do
     # Extract the ref portion after @
     ref="$(echo "${line}" | grep -oP 'uses:\s*["'\'']*\S+@\K[^"'\''\s]+' || true)"
-    if [[ -z "${ref}" ]]
-    then
+    if [[ -z "${ref}" ]]; then
       continue
     fi
     # Strip trailing quotes from YAML-quoted values
     ref="${ref%[\"\']}"
     # Skip docker:// container actions (no @ SHA pinning applies)
-    if [[ "${ref}" == docker://* ]]
-    then
+    if [[ "${ref}" == docker://* ]]; then
       continue
     fi
     # A valid SHA pin is exactly 40 lowercase hex characters
-    if [[ ${ref} =~ ^[0-9a-f]{40}$ ]]
-    then
+    if [[ ${ref} =~ ^[0-9a-f]{40}$ ]]; then
       okc=$((okc + 1))
     else
       echo "::error file=${yml}::unpinned action ref '${ref}' — use a full commit SHA instead of a mutable tag"
@@ -42,8 +37,7 @@ do
 done
 
 echo
-if [[ ${fail} -eq 0 ]]
-then
+if [[ ${fail} -eq 0 ]]; then
   echo "sha-pin-verify: PASS — ${okc} pinned uses: directive(s) found."
 else
   echo "sha-pin-verify: FAIL — one or more unpinned uses: directives above."

@@ -31,10 +31,8 @@ cleanup() {
   local archive_dir
   archive_dir="${ROOT}/_tmp/guard-fixtures-$(date +%Y%m%d-%H%M%S)"
   mkdir -p "${archive_dir}" 2>/dev/null || true
-  for d in "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"
-  do
-    if [[ -d "${d}" ]]
-    then
+  for d in "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"; do
+    if [[ -d "${d}" ]]; then
       cp -r "${d}" "${archive_dir}/" 2>/dev/null || true
     fi
   done
@@ -46,8 +44,7 @@ pass=0
 fail=0
 check() { # check <desc> <expected_exit> <actual_exit>
   local desc="$1" exp="$2" act="$3"
-  if [[ ${exp} -eq ${act} ]]
-  then
+  if [[ ${exp} -eq ${act} ]]; then
     echo "  ok: ${desc} (exit=${act})"
     pass=$((pass + 1))
   else
@@ -149,7 +146,7 @@ RB
 }
 run_kb() { # run_kb <dir> <entry> <maxage>  -> exit code of verify-checksums.sh
   local sedvc="$(mktemp)"
-  sed "s|\"saas-churn-predictor:2026-07-03\".*|\"${2}\"|; s|KNOWN_BROKEN_MAX_AGE_DAYS:-90|KNOWN_BROKEN_MAX_AGE_DAYS:-${3}|"     "${VERIFY_CHECKSUM}" >"${sedvc}"
+  sed "s|\"saas-churn-predictor:2026-07-03\".*|\"${2}\"|; s|KNOWN_BROKEN_MAX_AGE_DAYS:-90|KNOWN_BROKEN_MAX_AGE_DAYS:-${3}|" "${VERIFY_CHECKSUM}" >"${sedvc}"
   bash "${sedvc}" "${1}" >/dev/null 2>&1
   local rc=$?
   rm -f "${sedvc}"
@@ -188,17 +185,23 @@ bash "${VERIFY_SHA_PINS}" "${SP_BAD}" >/dev/null 2>&1
 check "fails when uses: has mutable tag (@v4)" 1 $?
 
 # ---- KNOWN_BROKEN staleness gate (offline, deterministic path only) ---------
-KB1="$(mktemp -d)"; KB2="$(mktemp -d)"; KB3="$(mktemp -d)"
-kbfx "${KB1}" fx; kbfx "${KB2}" fx; kbfx "${KB3}" fx
+KB1="$(mktemp -d)"
+KB2="$(mktemp -d)"
+KB3="$(mktemp -d)"
+kbfx "${KB1}" fx
+kbfx "${KB2}" fx
+kbfx "${KB3}" fx
 TODAY="$(date -u +%F)"
 echo "verify-checksums.sh KNOWN_BROKEN staleness gate:"
-run_kb "${KB1}" "fx:${TODAY}" 90; check "fresh dated KNOWN_BROKEN entry still downgrades" 0 $?
-run_kb "${KB2}" "fx" 90;          check "undated KNOWN_BROKEN entry still downgrades (with nag)" 0 $?
-run_kb "${KB3}" "fx:2026-01-01" 90; check "STALE dated KNOWN_BROKEN entry becomes a hard failure" 1 $?
+run_kb "${KB1}" "fx:${TODAY}" 90
+check "fresh dated KNOWN_BROKEN entry still downgrades" 0 $?
+run_kb "${KB2}" "fx" 90
+check "undated KNOWN_BROKEN entry still downgrades (with nag)" 0 $?
+run_kb "${KB3}" "fx:2026-01-01" 90
+check "STALE dated KNOWN_BROKEN entry becomes a hard failure" 1 $?
 
 echo
-if [[ ${fail} -eq 0 ]]
-then
+if [[ ${fail} -eq 0 ]]; then
   echo "guard-tests: PASS - ${pass} assertion(s) ok."
   exit 0
 else
