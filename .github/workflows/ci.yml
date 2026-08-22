@@ -22,7 +22,9 @@ jobs:
           command -v shfmt >/dev/null || brew install shfmt
           brew style "$GITHUB_WORKSPACE"
           shellcheck scripts/*.sh
-          shfmt -d scripts/*.sh
+          # Same flags Homebrew's own style check uses (-i 2 -ci); bare
+          # `shfmt -d` defaults to tab indent and would false-fail the tap.
+          shfmt -d -i 2 -ci scripts/*.sh
 
   # Downloads each formula's release tarball and confirms the recorded sha256
   # matches, and that the URL is reachable. Replaces the old placeholder-only
