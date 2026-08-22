@@ -15,16 +15,25 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
-      - name: Style-check the checked-out workspace
+      - name: Style-check the checked-out tree as a local tap
         run: |
           set -euo pipefail
           command -v shellcheck >/dev/null || brew install shellcheck
           command -v shfmt >/dev/null || brew install shfmt
-          brew style "$GITHUB_WORKSPACE"
+          # Tap the CHECKED-OUT tree locally and run brew style on it, so we
+          # get Homebrew's exact style rules without test-bot's re-tap of the
+          # default branch (which ignores actions/checkout).
+          owner="${GITHUB_REPOSITORY%%/*}"
+          name="${GITHUB_REPOSITORY#*/}"
+          tap_path="$(brew --repository)/Library/Taps/$owner/$name"
+          mkdir -p "$(dirname "$tap_path")"
+          cp -R "$GITHUB_WORKSPACE/." "$tap_path/"
+          cd "$tap_path"
+          git init -q
+          git add -A
+          git -c user.email=ci@local -c user.name=ci commit -qm "checked-out head"
+          brew style "$owner/$name"
           shellcheck scripts/*.sh
-          # Same flags Homebrew's own style check uses (-i 2 -ci); bare
-          # `shfmt -d` defaults to tab indent and would false-fail the tap.
-          shfmt -d -i 2 -ci scripts/*.sh
 
   # Downloads each formula's release tarball and confirms the recorded sha256
   # matches, and that the URL is reachable. Replaces the old placeholder-only
