@@ -36,15 +36,18 @@ NOT_FOUND_HASH="0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5
 # Resolve a KNOWN_BROKEN entry to "known" | "stale" | "undated"; "" if absent.
 kb_status() {
   local n="${1}" k name d
-  for k in "${KNOWN_BROKEN[@]}"; do
+  for k in "${KNOWN_BROKEN[@]}"
+  do
     name="${k%%:*}"
     [[ ${name} == "${n}" ]] || continue
     d="${k#*:}"
-    if [[ ${d} == "${k}" ]]; then # no ':' -> bare, undated entry
+    if [[ ${d} == "${k}" ]]
+    then # no ':' -> bare, undated entry
       echo "undated"
       return 0
     fi
-    if [[ ! ${d} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+    if [[ ! ${d} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]
+    then
       echo "undated"
       return 0
     fi
@@ -53,15 +56,17 @@ kb_status() {
     # GNU + BSD date portability: parse the fixed-format date ourselves.
     local Y=${d:0:4} M=${d:5:2} D=${d:8:2}
     local then_s
-    then_s="$(date -u -j -f '%Y-%m-%d %H:%M:%S' "${Y}-${M}-${D} 00:00:00" +%s 2> /dev/null \
-      || date -u -d "${Y}-${M}-${D} 00:00:00" +%s 2> /dev/null \
-      || echo "")"
-    if [[ -z ${then_s} ]]; then
+    then_s="$(date -u -j -f '%Y-%m-%d %H:%M:%S' "${Y}-${M}-${D} 00:00:00" +%s 2>/dev/null ||
+      date -u -d "${Y}-${M}-${D} 00:00:00" +%s 2>/dev/null ||
+      echo "")"
+    if [[ -z ${then_s} ]]
+    then
       echo "undated"
       return 0
     fi
     age_s=$((now - then_s))
-    if ((age_s > KNOWN_BROKEN_MAX_AGE_DAYS * 86400)); then
+    if ((age_s > KNOWN_BROKEN_MAX_AGE_DAYS * 86400))
+    then
       echo "stale"
     else
       echo "known"
@@ -89,6 +94,9 @@ handle_broken() {
     stale)
       echo "::error file=${rb}::${name}: ${msg} — AND its KNOWN_BROKEN excuse is STALE (> ${KNOWN_BROKEN_MAX_AGE_DAYS} days). Fix the upstream release and delete the entry, or deliberately re-date it."
       ;;
+    *)
+      : # unknown kind: caller treats as unhandled (hard failure)
+      ;;
   esac
 }
 
@@ -99,22 +107,27 @@ tmp="$(mktemp)"
 trap 'rm -f "${tmp}"' EXIT
 
 shopt -s nullglob
-for rb in "${FORMULA_DIR}"/*.rb; do
+for rb in "${FORMULA_DIR}"/*.rb
+do
   name="$(basename "${rb}" .rb)"
   url="$(grep -oP 'url "\K[^"]+' "${rb}" | head -1)"
   sha="$(grep -oP 'sha256 "\K[^"]+' "${rb}" | head -1)"
 
   # 1) Deterministic checks (no network) --------------------------------------
-  if [[ ! ${sha} =~ ^[0-9a-f]{64}$ ]]; then
+  if [[ ! ${sha} =~ ^[0-9a-f]{64}$ ]]
+  then
     echo "::error file=${rb}::${name}: malformed sha256 (must be 64 lowercase hex): '${sha}'"
     fail=1
     continue
   fi
-  if [[ ${sha} == "${NOT_FOUND_HASH}" ]]; then
+  if [[ ${sha} == "${NOT_FOUND_HASH}" ]]
+  then
     kind="$(kb_status "${name}")"
-    if [[ -n ${kind} ]]; then
+    if [[ -n ${kind} ]]
+    then
       handle_broken "${rb}" "${name}" "${kind}" "sha256 is GitHub's 'Not Found' error-page hash (dead release URL)"
-      if ((KB_HANDLED)); then
+      if ((KB_HANDLED))
+      then
         warn=$((warn + 1))
         continue
       fi
@@ -127,12 +140,15 @@ for rb in "${FORMULA_DIR}"/*.rb; do
   fi
 
   # 2) Network check: download + compare --------------------------------------
-  code="$(curl -sSL --retry 2 --max-time 60 -o "${tmp}" -w '%{http_code}' "${url}" 2> /dev/null || echo 000)"
-  if [[ ${code} != "200" ]]; then
+  code="$(curl -sSL --retry 2 --max-time 60 -o "${tmp}" -w '%{http_code}' "${url}" 2>/dev/null || echo 000)"
+  if [[ ${code} != "200" ]]
+  then
     kind="$(kb_status "${name}")"
-    if [[ -n ${kind} ]]; then
+    if [[ -n ${kind} ]]
+    then
       handle_broken "${rb}" "${name}" "${kind}" "url returned HTTP ${code}: ${url}"
-      if ((KB_HANDLED)); then
+      if ((KB_HANDLED))
+      then
         warn=$((warn + 1))
         continue
       fi
@@ -144,11 +160,14 @@ for rb in "${FORMULA_DIR}"/*.rb; do
     continue
   fi
   got="$(sha256sum "${tmp}" | cut -d' ' -f1)"
-  if [[ ${got} != "${sha}" ]]; then
+  if [[ ${got} != "${sha}" ]]
+  then
     kind="$(kb_status "${name}")"
-    if [[ -n ${kind} ]]; then
+    if [[ -n ${kind} ]]
+    then
       handle_broken "${rb}" "${name}" "${kind}" "sha256 mismatch: have=${sha} real=${got}"
-      if ((KB_HANDLED)); then
+      if ((KB_HANDLED))
+      then
         warn=$((warn + 1))
         continue
       fi
@@ -164,7 +183,8 @@ for rb in "${FORMULA_DIR}"/*.rb; do
 done
 
 echo
-if [[ ${fail} -eq 0 ]]; then
+if [[ ${fail} -eq 0 ]]
+then
   echo "checksum-verify: PASS — ${okc} verified, ${warn} known-broken warning(s)."
 else
   echo "checksum-verify: FAIL — ${okc} verified, ${warn} warning(s), and one or more errors above."
