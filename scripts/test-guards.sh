@@ -137,6 +137,26 @@ cp "${CS}/saas-churn-predictor.rb" "${CSKB}/"
 "${VERIFY_CHECKSUM}" "${CSKB}" >/dev/null 2>&1
 check "downgrades KNOWN_BROKEN 404-hash to a warning (exit 0)" 0 $?
 
+# KNOWN_BROKEN staleness gate: dated entries expire after
+# KNOWN_BROKEN_MAX_AGE_DAYS and their downgrade is revoked (hard FAIL).
+kbfx() { # kbfx <dir> <formula-name>
+  cat >"${1}/${2}.rb" <<RB
+class Kbplaceholder < Formula
+  url "https://example.com/${2}.tar.gz"
+  sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+end
+RB
+}
+run_kb() { # run_kb <dir> <entry> <maxage>  -> exit code of verify-checksums.sh
+  local sedvc
+  sedvc="$(mktemp)"
+  sed "s|\"saas-churn-predictor:2026-07-03\".*|\"${2}\"|; s|KNOWN_BROKEN_MAX_AGE_DAYS:-90|KNOWN_BROKEN_MAX_AGE_DAYS:-${3}|" "${VERIFY_CHECKSUM}" >"${sedvc}"
+  bash "${sedvc}" "${1}" >/dev/null 2>&1
+  local rc=$?
+  rm -f "${sedvc}"
+  return "${rc}"
+}
+
 # ---- Fixtures for verify-sha-pins.sh (offline, regex-based) -----------------
 # pinned: all uses: directives have 40-char SHA -> should PASS
 cat >"${SP}/ci.yml" <<'YML'
@@ -167,6 +187,22 @@ bash "${VERIFY_SHA_PINS}" "${SP}" >/dev/null 2>&1
 check "passes when all uses: are SHA-pinned" 0 $?
 bash "${VERIFY_SHA_PINS}" "${SP_BAD}" >/dev/null 2>&1
 check "fails when uses: has mutable tag (@v4)" 1 $?
+
+# ---- KNOWN_BROKEN staleness gate (offline, deterministic path only) ---------
+KB1="$(mktemp -d)"
+KB2="$(mktemp -d)"
+KB3="$(mktemp -d)"
+kbfx "${KB1}" fx
+kbfx "${KB2}" fx
+kbfx "${KB3}" fx
+TODAY="$(date -u +%F)"
+echo "verify-checksums.sh KNOWN_BROKEN staleness gate:"
+run_kb "${KB1}" "fx:${TODAY}" 90
+check "fresh dated KNOWN_BROKEN entry still downgrades" 0 $?
+run_kb "${KB2}" "fx" 90
+check "undated KNOWN_BROKEN entry still downgrades (with nag)" 0 $?
+run_kb "${KB3}" "fx:2026-01-01" 90
+check "STALE dated KNOWN_BROKEN entry becomes a hard failure" 1 $?
 
 echo
 if [[ ${fail} -eq 0 ]]

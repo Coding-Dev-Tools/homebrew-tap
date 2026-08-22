@@ -6,11 +6,36 @@ on:
   pull_request:
 
 jobs:
+  # Style gate must run against the CHECKED-OUT tree. `brew test-bot
+  # --only-tap-syntax` (the previous implementation) re-taps the repo from its
+  # DEFAULT branch, ignoring actions/checkout — so a red style error on main
+  # deadlocks every PR branch (unfixable from any head). See council note
+  # 2026-08-22T10:44Z in _cowork_ops/ALERT.md.
   tap-syntax:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
-      - run: brew test-bot --only-tap-syntax
+      - name: Style-check the checked-out tree as a local tap
+        run: |
+          set -euo pipefail
+          command -v shellcheck >/dev/null || brew install shellcheck
+          command -v shfmt >/dev/null || brew install shfmt
+          # Tap the CHECKED-OUT tree locally and run brew style on it, so we
+          # get Homebrew's exact style rules without test-bot's re-tap of the
+          # default branch (which ignores actions/checkout).
+          owner="${GITHUB_REPOSITORY%%/*}"
+          name="${GITHUB_REPOSITORY#*/}"
+          tap_path="$(brew --repository)/Library/Taps/$owner/$name"
+          mkdir -p "$(dirname "$tap_path")" "$tap_path"
+          # Copy WITHOUT .git so the local tap gets a fresh repo (the
+          # workspace checkout is a detached pull/N/merge HEAD).
+          tar -C "$GITHUB_WORKSPACE" --exclude=./.git -cf - . | tar -C "$tap_path" -xf -
+          cd "$tap_path"
+          git init -q
+          git add -A
+          git -c user.email=ci@local -c user.name=ci commit -qm "checked-out head"
+          brew style "$owner/$name"
+          shellcheck scripts/*.sh
 
   # Downloads each formula's release tarball and confirms the recorded sha256
   # matches, and that the URL is reachable. Replaces the old placeholder-only
