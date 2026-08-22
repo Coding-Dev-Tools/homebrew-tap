@@ -41,14 +41,14 @@ for rb in "${FORMULA_DIR}"/*.rb; do
   fi
 
   case "${prefix}" in
-  true | false | nil | True | False | None)
-    echo "::error file=${rb}::${name}: std_pip_args(prefix: ${prefix}) is not a path — Homebrew interpolates it into '--prefix=${prefix}', so nothing installs where the symlink points and 'brew install ${name}' fails."
-    fail=1
-    continue
-    ;;
-  *)
-    :
-    ;;
+    true | false | nil | True | False | None)
+      echo "::error file=${rb}::${name}: std_pip_args(prefix: ${prefix}) is not a path — Homebrew interpolates it into '--prefix=${prefix}', so nothing installs where the symlink points and 'brew install ${name}' fails."
+      fail=1
+      continue
+      ;;
+    *)
+      :
+      ;;
   esac
 
   if [[ -n ${symbase} ]] && [[ ${prefix} != "${symbase}" ]]; then

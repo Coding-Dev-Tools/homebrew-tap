@@ -33,7 +33,7 @@ for yml in "${WORKFLOWS_DIR}"/*.yml "${WORKFLOWS_DIR}"/*.yaml; do
       echo "::error file=${yml}::unpinned action ref '${ref}' — use a full commit SHA instead of a mutable tag"
       fail=1
     fi
-  done < <(grep -nP '^\s*-?\s*uses:' "${yml}" 2>/dev/null || true)
+  done < <(grep -nP '^\s*-?\s*uses:' "${yml}" 2> /dev/null || true)
 done
 
 echo

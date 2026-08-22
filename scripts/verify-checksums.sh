@@ -53,9 +53,9 @@ kb_status() {
     # GNU + BSD date portability: parse the fixed-format date ourselves.
     local Y=${d:0:4} M=${d:5:2} D=${d:8:2}
     local then_s
-    then_s="$(date -u -j -f '%Y-%m-%d %H:%M:%S' "${Y}-${M}-${D} 00:00:00" +%s 2>/dev/null ||
-      date -u -d "${Y}-${M}-${D} 00:00:00" +%s 2>/dev/null ||
-      echo "")"
+    then_s="$(date -u -j -f '%Y-%m-%d %H:%M:%S' "${Y}-${M}-${D} 00:00:00" +%s 2> /dev/null \
+      || date -u -d "${Y}-${M}-${D} 00:00:00" +%s 2> /dev/null \
+      || echo "")"
     if [[ -z ${then_s} ]]; then
       echo "undated"
       return 0
@@ -78,17 +78,17 @@ handle_broken() {
   local rb="${1}" name="${2}" kind="${3}" msg="${4}"
   KB_HANDLED=0
   case "${kind}" in
-  known)
-    echo "::warning file=${rb}::${name}: ${msg} — known-broken (dated), tracked."
-    KB_HANDLED=1
-    ;;
-  undated)
-    echo "::warning file=${rb}::${name}: ${msg} — known-broken but UNDATED; add \":YYYY-MM-DD\" to its KNOWN_BROKEN entry so the staleness gate can track it."
-    KB_HANDLED=1
-    ;;
-  stale)
-    echo "::error file=${rb}::${name}: ${msg} — AND its KNOWN_BROKEN excuse is STALE (> ${KNOWN_BROKEN_MAX_AGE_DAYS} days). Fix the upstream release and delete the entry, or deliberately re-date it."
-    ;;
+    known)
+      echo "::warning file=${rb}::${name}: ${msg} — known-broken (dated), tracked."
+      KB_HANDLED=1
+      ;;
+    undated)
+      echo "::warning file=${rb}::${name}: ${msg} — known-broken but UNDATED; add \":YYYY-MM-DD\" to its KNOWN_BROKEN entry so the staleness gate can track it."
+      KB_HANDLED=1
+      ;;
+    stale)
+      echo "::error file=${rb}::${name}: ${msg} — AND its KNOWN_BROKEN excuse is STALE (> ${KNOWN_BROKEN_MAX_AGE_DAYS} days). Fix the upstream release and delete the entry, or deliberately re-date it."
+      ;;
   esac
 }
 
@@ -127,7 +127,7 @@ for rb in "${FORMULA_DIR}"/*.rb; do
   fi
 
   # 2) Network check: download + compare --------------------------------------
-  code="$(curl -sSL --retry 2 --max-time 60 -o "${tmp}" -w '%{http_code}' "${url}" 2>/dev/null || echo 000)"
+  code="$(curl -sSL --retry 2 --max-time 60 -o "${tmp}" -w '%{http_code}' "${url}" 2> /dev/null || echo 000)"
   if [[ ${code} != "200" ]]; then
     kind="$(kb_status "${name}")"
     if [[ -n ${kind} ]]; then
