@@ -1,0 +1,33 @@
+# Seeded by the repo-improver-rotation Cowork job into cowork/improve-* branches.
+# Opens a PR automatically when such a branch is pushed. Merge remains a
+# separate, gated reviewer action; this workflow never merges.
+name: cowork-auto-pr
+on:
+  push:
+    branches: ['cowork/improve-**']
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  ensure-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pushed branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - name: Open PR for this branch if none exists
+        env:
+          GH_TOKEN: ${{ secrets.COWORK_PR_TOKEN || github.token }}
+        run: |
+          set -eu
+          existing=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$GITHUB_REF_NAME" --state open --json number --jq 'length')
+          if [ "$existing" = "0" ]; then
+            gh pr create --repo "$GITHUB_REPOSITORY" \
+              --head "$GITHUB_REF_NAME" \
+              --title "cowork-bot: automated improvements ($GITHUB_REF_NAME)" \
+              --body "Automated improvement PR from the Cowork repo-improver rotation. Subsequent runs must add review-driven or otherwise substantive improvement commits to this PR; no direct default-branch commits or automatic merge is performed."
+          else
+            echo "Open PR already exists for $GITHUB_REF_NAME — subsequent commits improve that PR."
+          fi

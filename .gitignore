@@ -1,0 +1,7 @@
+
+# Local opencode config
+AGENTS.md
+.agents/
+
+# Local test-fixture archives from scripts/test-guards.sh cleanup
+_tmp/
