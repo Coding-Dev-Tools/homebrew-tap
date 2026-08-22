@@ -30,8 +30,10 @@ cleanup() {
   # Archive fixtures per AGENTS.md mandate (never delete throwaway test data)
   local archive_dir="${ROOT}/_tmp/guard-fixtures-$(date +%Y%m%d-%H%M%S)"
   mkdir -p "${archive_dir}" 2>/dev/null || true
-  for d in "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"; do
-    if [ -d "$d" ]; then
+  for d in "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"
+  do
+    if [ -d "$d" ]
+    then
       cp -r "$d" "${archive_dir}/" 2>/dev/null || true
     fi
   done
