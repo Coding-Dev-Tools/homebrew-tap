@@ -32,9 +32,9 @@ cleanup() {
   mkdir -p "${archive_dir}" 2>/dev/null || true
   for d in "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"
   do
-    if [ -d "$d" ]
+    if [[ -d "${d}" ]]
     then
-      cp -r "$d" "${archive_dir}/" 2>/dev/null || true
+      cp -r "${d}" "${archive_dir}/" 2>/dev/null || true
     fi
   done
   rm -rf "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"
