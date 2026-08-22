@@ -1,4 +1,0 @@
-# Enforce LF line endings so `brew style` / tap-syntax CI stays green.
-*.rb   text eol=lf
-*.yml  text eol=lf
-*.md   text eol=lf
