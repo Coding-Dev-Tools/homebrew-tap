@@ -27,7 +27,9 @@ jobs:
           name="${GITHUB_REPOSITORY#*/}"
           tap_path="$(brew --repository)/Library/Taps/$owner/$name"
           mkdir -p "$(dirname "$tap_path")"
-          cp -R "$GITHUB_WORKSPACE/." "$tap_path/"
+          # Copy WITHOUT .git so the local tap gets a fresh repo (the
+          # workspace checkout is a detached pull/N/merge HEAD).
+          tar -C "$GITHUB_WORKSPACE" --exclude=./.git -cf - . | tar -C "$tap_path" -xf -
           cd "$tap_path"
           git init -q
           git add -A
