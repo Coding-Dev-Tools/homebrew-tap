@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Self-tests for the tap's two silent-failure guards:
+# Self-tests for the tap's three silent-failure guards:
 #   - scripts/verify-formula-install.sh  (offline, grep-based)
 #   - scripts/verify-checksums.sh        (offline-deterministic checks)
+#   - scripts/verify-sha-pins.sh         (offline, regex-based)
 #
 # These guards are the only thing standing between a broken formula and a
 # green CI run. If the guards themselves regress, CI must go RED — that is
@@ -16,13 +17,26 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "${HERE}/.." && pwd)"
 VERIFY_INSTALL="${ROOT}/scripts/verify-formula-install.sh"
 VERIFY_CHECKSUM="${ROOT}/scripts/verify-checksums.sh"
+VERIFY_SHA_PINS="${ROOT}/scripts/verify-sha-pins.sh"
 
 FX="$(mktemp -d)"
 CS="$(mktemp -d)"
 GOODONLY="$(mktemp -d)"
 CSKB="$(mktemp -d)"
+SP="$(mktemp -d)"
+SP_BAD="$(mktemp -d)"
 # shellcheck disable=SC2329
-cleanup() { rm -rf "${FX}" "${CS}" "${GOODONLY}" "${CSKB}"; }
+cleanup() {
+  # Archive fixtures per AGENTS.md mandate (never delete throwaway test data)
+  local archive_dir="${ROOT}/_tmp/guard-fixtures-$(date +%Y%m%d-%H%M%S)"
+  mkdir -p "${archive_dir}" 2>/dev/null || true
+  for d in "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"; do
+    if [ -d "$d" ]; then
+      cp -r "$d" "${archive_dir}/" 2>/dev/null || true
+    fi
+  done
+  rm -rf "${FX}" "${CS}" "${GOODONLY}" "${CSKB}" "${SP}" "${SP_BAD}"
+}
 trap cleanup EXIT
 
 pass=0
@@ -119,6 +133,37 @@ check "fails on malformed hash + 404-page hash (known-broken downgraded)" 1 $?
 cp "${CS}/saas-churn-predictor.rb" "${CSKB}/"
 "${VERIFY_CHECKSUM}" "${CSKB}" >/dev/null 2>&1
 check "downgrades KNOWN_BROKEN 404-hash to a warning (exit 0)" 0 $?
+
+# ---- Fixtures for verify-sha-pins.sh (offline, regex-based) -----------------
+# pinned: all uses: directives have 40-char SHA -> should PASS
+cat >"${SP}/ci.yml" <<'YML'
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+YML
+
+# unpinned: uses @v4 mutable tag -> must FAIL
+cat >"${SP_BAD}/ci.yml" <<'YML'
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+YML
+
+echo "verify-sha-pins.sh:"
+bash "${VERIFY_SHA_PINS}" "${SP}" >/dev/null 2>&1
+check "passes when all uses: are SHA-pinned" 0 $?
+bash "${VERIFY_SHA_PINS}" "${SP_BAD}" >/dev/null 2>&1
+check "fails when uses: has mutable tag (@v4)" 1 $?
 
 echo
 if [[ ${fail} -eq 0 ]]
