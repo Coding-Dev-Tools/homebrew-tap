@@ -210,13 +210,15 @@ echo
 # upstream releases; a formula without one silently goes stale.
 echo "livecheck coverage guard:"
 LC_FAIL=0
-for formula in "$ROOT"/Formula/*.rb; do
-  if ! grep -q "livecheck do" "$formula"; then
-    echo "::error file=Formula/$(basename "$formula")::missing livecheck stanza"
+for formula in "$ROOT"/Formula/*.rb
+do
+  if ! grep -q "livecheck do" "$formula"
+  then
+    echo "::error file=Formula/$(basename "${formula}")::missing livecheck stanza"
     LC_FAIL=1
   fi
 done
-check "every formula has a livecheck stanza" 0 $LC_FAIL
+check "every formula has a livecheck stanza" 0 "${LC_FAIL}"
 
 if [[ ${fail} -eq 0 ]]
 then
