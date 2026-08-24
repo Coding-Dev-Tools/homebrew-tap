@@ -3,12 +3,11 @@ class Deploydiff < Formula
   homepage "https://github.com/Coding-Dev-Tools/deploydiff"
   url "https://github.com/Coding-Dev-Tools/deploydiff/archive/refs/tags/v0.1.0.tar.gz"
   sha256 "7925cdae54980e59641c879d39b40a8390f875b5ada05821ddcd8bf28a262478"
+  license "MIT"
   livecheck do
     url :stable
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
-
-  license "MIT"
 
   depends_on "python@3.10"
 
