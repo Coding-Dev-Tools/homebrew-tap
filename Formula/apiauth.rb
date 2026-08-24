@@ -3,6 +3,11 @@ class Apiauth < Formula
   homepage "https://github.com/Coding-Dev-Tools/apiauth"
   url "https://github.com/Coding-Dev-Tools/apiauth/archive/refs/tags/v0.2.0.tar.gz"
   sha256 "88ab13398ff83060a6cbd96fa6f19614ec6ee24e8d9884a02ab4bbf13ad48e8e"
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
   license "MIT"
 
   depends_on "python@3.10"

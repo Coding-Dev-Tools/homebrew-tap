@@ -3,6 +3,11 @@ class Datamorph < Formula
   homepage "https://github.com/Coding-Dev-Tools/datamorph"
   url "https://github.com/Coding-Dev-Tools/datamorph/archive/refs/tags/v1.2.0.tar.gz"
   sha256 "ae3ce3938c0be458a427c0e3c224ab231d512ea3a3fb8b62d20dea958831fc97"
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
   license "MIT"
 
   depends_on "python@3.10"
