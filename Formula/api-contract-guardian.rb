@@ -4,6 +4,10 @@ class ApiContractGuardian < Formula
   url "https://github.com/Coding-Dev-Tools/api-contract-guardian/archive/refs/tags/v0.1.0.tar.gz"
   sha256 "edd9eaa56f97181e052ef3932aad29f1ef79aaf45b5afe0df089982f779177ba"
   license "MIT"
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
 
   depends_on "python@3.10"
 

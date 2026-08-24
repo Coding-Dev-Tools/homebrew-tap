@@ -205,6 +205,21 @@ run_kb "${KB3}" "fx:2026-01-01" 90
 check "STALE dated KNOWN_BROKEN entry becomes a hard failure" 1 $?
 
 echo
+# ---- livecheck coverage ------------------------------------------------------
+# Every formula must carry a `livecheck` stanza so `brew livecheck` can detect
+# upstream releases; a formula without one silently goes stale.
+echo "livecheck coverage guard:"
+LC_FAIL=0
+for formula in "${ROOT}"/Formula/*.rb
+do
+  if ! grep -q "livecheck do" "${formula}"
+  then
+    echo "::error file=Formula/$(basename "${formula}")::missing livecheck stanza"
+    LC_FAIL=1
+  fi
+done
+check "every formula has a livecheck stanza" 0 "${LC_FAIL}"
+
 if [[ ${fail} -eq 0 ]]
 then
   echo "guard-tests: PASS - ${pass} assertion(s) ok."

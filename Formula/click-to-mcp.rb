@@ -4,6 +4,10 @@ class ClickToMcp < Formula
   url "https://github.com/Coding-Dev-Tools/click-to-mcp/archive/refs/tags/v0.5.0.tar.gz"
   sha256 "14dfa3fc743cfd40451d91b87bbc0a5c354dca352e9454c409efb44f5a693c28"
   license "Apache-2.0"
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
 
   depends_on "python@3.10"
 

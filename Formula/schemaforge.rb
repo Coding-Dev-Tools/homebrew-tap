@@ -4,6 +4,10 @@ class Schemaforge < Formula
   url "https://github.com/Coding-Dev-Tools/schemaforge/archive/refs/tags/v1.7.0.tar.gz"
   sha256 "b7f523d16a04c9ff4b010a8a9765c117c008b9281d3a3bd675e079623538a092"
   license "MIT"
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
 
   depends_on "python@3.10"
 
