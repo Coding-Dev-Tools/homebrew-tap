@@ -212,7 +212,7 @@ echo "livecheck coverage guard:"
 LC_FAIL=0
 for formula in "${ROOT}"/Formula/*.rb
 do
-  if ! grep -q "livecheck do" "${formula}"
+  if ! grep -qE "livecheck\s+(do|:none)" "${formula}"
   then
     echo "::error file=Formula/$(basename "${formula}")::missing livecheck stanza"
     LC_FAIL=1
