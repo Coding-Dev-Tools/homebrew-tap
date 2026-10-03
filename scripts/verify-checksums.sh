@@ -25,7 +25,7 @@ FORMULA_DIR="${1:-Formula}"
 # either an upstream fix (delete the entry) or a deliberate re-date. Bare names
 # without a date still work but emit a one-time warning asking to be dated.
 KNOWN_BROKEN=(
-  "saas-churn-predictor:2026-07-03" # upstream v0.1.0 tag not published yet
+  "saas-churn-predictor:2026-10-03" # upstream v0.1.0 tag not published yet
 )
 KNOWN_BROKEN_MAX_AGE_DAYS="${KNOWN_BROKEN_MAX_AGE_DAYS:-90}"
 
