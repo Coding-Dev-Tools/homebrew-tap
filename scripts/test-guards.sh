@@ -150,7 +150,7 @@ RB
 run_kb() { # run_kb <dir> <entry> <maxage>  -> exit code of verify-checksums.sh
   local sedvc
   sedvc="$(mktemp)"
-  sed "s|\"saas-churn-predictor:2026-07-03\".*|\"${2}\"|; s|KNOWN_BROKEN_MAX_AGE_DAYS:-90|KNOWN_BROKEN_MAX_AGE_DAYS:-${3}|" "${VERIFY_CHECKSUM}" >"${sedvc}"
+  sed -E "s|\"saas-churn-predictor(:[0-9-]+)?\".*|\"${2}\"|; s|KNOWN_BROKEN_MAX_AGE_DAYS:-90|KNOWN_BROKEN_MAX_AGE_DAYS:-${3}|" "${VERIFY_CHECKSUM}" >"${sedvc}"
   bash "${sedvc}" "${1}" >/dev/null 2>&1
   local rc=$?
   rm -f "${sedvc}"
